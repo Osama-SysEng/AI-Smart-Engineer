@@ -12,4 +12,4 @@ class TestDocuments:
 
     async def test_upload_document_unauthorized(self, client: AsyncClient):
         response = await client.post("/api/v1/documents/upload")
-        assert response.status_code == 403
+        assert response.status_code == 401

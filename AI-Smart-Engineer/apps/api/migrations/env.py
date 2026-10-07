@@ -3,6 +3,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 import asyncio
+import os
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 # Import models
@@ -11,6 +12,11 @@ from src.db.models import *  # noqa
 
 # this is the Alembic Config object
 config = context.config
+
+# Allow DATABASE_URL env override (docker/local)
+_db_url = os.getenv("DATABASE_URL")
+if _db_url:
+    config.set_main_option("sqlalchemy.url", _db_url)
 
 # Interpret the config file for Python logging
 if config.config_file_name is not None:
