@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Dict, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ReconciliationRunCreate(BaseModel):
@@ -27,8 +27,7 @@ class ReconciliationItemResponse(BaseModel):
     approved: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ReconciliationRunResponse(BaseModel):
@@ -47,5 +46,4 @@ class ReconciliationRunResponse(BaseModel):
     summary: str | None
     items: List[ReconciliationItemResponse] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

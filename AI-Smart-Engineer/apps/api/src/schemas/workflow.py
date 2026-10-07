@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Dict, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class WorkflowCreate(BaseModel):
@@ -25,8 +25,7 @@ class WorkflowResponse(BaseModel):
     created_by: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class WorkflowRunResponse(BaseModel):
@@ -40,8 +39,7 @@ class WorkflowRunResponse(BaseModel):
     completed_at: datetime | None
     trace_id: str | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TaskCreate(BaseModel):
@@ -70,5 +68,4 @@ class TaskResponse(BaseModel):
     completed_at: datetime | None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

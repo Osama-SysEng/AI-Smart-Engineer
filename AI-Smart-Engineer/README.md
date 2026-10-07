@@ -65,14 +65,14 @@ docker-compose exec api alembic upgrade head
 
 ## Project Structure
 
-- `apps/web/` - Next.js frontend (React, TypeScript, Tailwind)
-- `apps/api/` - FastAPI backend (Python, async, modular)
-- `services/` - Microservices (ingestion, AI, SAP, etc.)
-- `agents/` - AI agents system
-- `integrations/` - ERP/CRM adapters
-- `workers/` - Background task workers
+- `apps/web/src/` - Next.js frontend (React, TypeScript, Tailwind)
+- `apps/api/src/` - FastAPI backend (Python, async, modular: `auth/`, `projects/`, `documents/`, `extraction/`, `reconciliation/`, `workflows/`, `ai/`, `agents/`, `integrations/sap/`, `services/`, `queue/` Celery workers, `security/`, `audit/`)
+- `apps/api/tests/` - backend test suite (pytest)
+- `apps/api/migrations/` - Alembic migrations (baseline `0001`, `0002` head)
 - `infrastructure/` - Docker, K8s, Terraform
-- `tests/` - Comprehensive test suite
+- `docs/` - documentation
+- `tools/` - operational tooling
+- `reports/` - generated reports
 
 ## Features
 

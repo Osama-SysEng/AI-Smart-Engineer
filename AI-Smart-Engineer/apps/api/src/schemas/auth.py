@@ -1,5 +1,5 @@
 """Authentication schemas."""
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserCreate(BaseModel):
@@ -24,8 +24,7 @@ class UserResponse(BaseModel):
     last_login: str | None
     tenant_id: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserLogin(BaseModel):

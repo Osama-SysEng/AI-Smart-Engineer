@@ -1,7 +1,7 @@
 """LLM Provider abstraction with routing, fallback, and cost tracking."""
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from src.core.config import get_settings
 from src.core.logging import get_logger
@@ -22,7 +22,7 @@ class LLMResponse:
         self.latency_ms = latency_ms
         self.cost = cost
         self.tool_calls = tool_calls or []
-        self.timestamp = datetime.utcnow()
+        self.timestamp = datetime.now(timezone.utc)
 
 
 class BaseLLMProvider(ABC):

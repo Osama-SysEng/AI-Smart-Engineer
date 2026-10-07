@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ExtractionRunCreate(BaseModel):
@@ -25,5 +25,4 @@ class ExtractionRunResponse(BaseModel):
     model_used: str | None
     processing_time_ms: int | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

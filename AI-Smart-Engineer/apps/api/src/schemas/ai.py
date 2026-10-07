@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Dict, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class AIChatRequest(BaseModel):
@@ -37,5 +37,4 @@ class AIUsageResponse(BaseModel):
     total_cost: float
     avg_latency_ms: float | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

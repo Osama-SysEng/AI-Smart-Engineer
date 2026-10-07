@@ -85,7 +85,7 @@ class AnomalyDetector:
                             "value": item["date"],
                             "rule": "date <= today",
                         })
-                except:
+                except (ValueError, TypeError):
                     anomalies.append({
                         "item_code": item.get("item_code"),
                         "type": "invalid_date",
