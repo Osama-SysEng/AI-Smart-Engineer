@@ -1,5 +1,5 @@
 # FastAPI & Server
-fastapi==0.111.0
+fastapi==0.139.2
 uvicorn[standard]==0.30.0
 python-multipart==0.0.9
 python-jose[cryptography]==3.3.0
