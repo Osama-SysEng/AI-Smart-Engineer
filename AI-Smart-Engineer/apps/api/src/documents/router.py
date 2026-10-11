@@ -115,11 +115,12 @@ async def get_document(
 @router.get("/{document_id}/entities", response_model=List[ExtractedEntityResponse])
 async def get_document_entities(
     document_id: str,
+    limit: int = Query(50, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get extracted entities for a document."""
     result = await db.execute(
-        select(ExtractedEntity).join(Document, Document.id == ExtractedEntity.document_id).join(Project, Project.id == Document.project_id).where(ExtractedEntity.document_id == document_id, Project.tenant_id == current_user.tenant_id)
+        select(ExtractedEntity).join(Document, Document.id == ExtractedEntity.document_id).join(Project, Project.id == Document.project_id).where(ExtractedEntity.document_id == document_id, Project.tenant_id == current_user.tenant_id).limit(limit)
     )
     return result.scalars().all()

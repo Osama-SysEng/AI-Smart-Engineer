@@ -1,7 +1,7 @@
 """AI Chat router."""
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, HTTPException, Query, status, WebSocket, WebSocketDisconnect
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -108,6 +108,7 @@ async def websocket_chat(websocket: WebSocket):
 @router.get("/usage", response_model=List[AIUsageResponse])
 async def get_ai_usage(
     period: str = "daily",
+    limit: int = Query(50, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permissions("ai:admin"))
 ):
@@ -116,7 +117,7 @@ async def get_ai_usage(
     from src.db.models.ai import AIUsage
 
     result = await db.execute(
-        select(AIUsage).where(AIUsage.period == period).order_by(AIUsage.created_at.desc())
+        select(AIUsage).where(AIUsage.period == period).order_by(AIUsage.created_at.desc()).limit(limit)
     )
     return result.scalars().all()
 

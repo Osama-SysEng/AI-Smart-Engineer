@@ -8,7 +8,7 @@ from src.db.base import Base, TimestampMixin, UUIDMixin
 class Notification(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "notifications"
 
-    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
     type: Mapped[str] = mapped_column(String(50), nullable=False)
     severity: Mapped[str] = mapped_column(String(20), default="info")
     title: Mapped[str] = mapped_column(String(500), nullable=False)

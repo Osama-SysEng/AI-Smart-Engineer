@@ -1,7 +1,7 @@
 """Workflows router."""
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -46,6 +46,8 @@ async def create_workflow(
 @router.get("", response_model=List[WorkflowResponse])
 async def list_workflows(
     project_id: str | None = None,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -53,13 +55,15 @@ async def list_workflows(
     query = select(Workflow).join(Project, Project.id == Workflow.project_id, isouter=True).where(Workflow.is_active == True, (Workflow.project_id.is_(None) | (Project.tenant_id == current_user.tenant_id)))
     if project_id:
         query = query.where(Workflow.project_id == project_id)
-    result = await db.execute(query)
+    result = await db.execute(query.offset(skip).limit(limit))
     return result.scalars().all()
 
 
 @router.get("/{workflow_id}/runs", response_model=List[WorkflowRunResponse])
 async def list_workflow_runs(
     workflow_id: str,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -72,6 +76,8 @@ async def list_workflow_runs(
             WorkflowRun.workflow_id == workflow_id,
             (Workflow.project_id.is_(None) | (Project.tenant_id == current_user.tenant_id)),
         )
+        .offset(skip)
+        .limit(limit)
     )
     return result.scalars().all()
 
@@ -116,6 +122,8 @@ async def list_tasks(
     project_id: str | None = None,
     assigned_to: str | None = None,
     status: str | None = None,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -127,5 +135,5 @@ async def list_tasks(
         query = query.where(Task.assigned_to == assigned_to)
     if status:
         query = query.where(Task.status == status)
-    result = await db.execute(query.order_by(Task.created_at.desc()))
+    result = await db.execute(query.order_by(Task.created_at.desc()).offset(skip).limit(limit))
     return result.scalars().all()

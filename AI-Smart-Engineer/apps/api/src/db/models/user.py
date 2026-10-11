@@ -22,7 +22,7 @@ class User(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     mfa_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
     mfa_secret: Mapped[str | None] = mapped_column(String(255), nullable=True)
     last_login: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    tenant_id: Mapped[str] = mapped_column(String(36), default="default")
+    tenant_id: Mapped[str] = mapped_column(String(36), default="default", index=True)
 
     roles: Mapped[List["Role"]] = relationship("Role", secondary="user_roles", back_populates="users")
     audit_logs: Mapped[List["AuditLog"]] = relationship("AuditLog", back_populates="user")

@@ -1,5 +1,8 @@
 """AI Smart Engineer - FastAPI Main Application."""
 import asyncio
+import os
+import time
+from collections import defaultdict
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -66,6 +69,37 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+
+def _rate_limit_per_minute() -> int:
+    try:
+        value = int(os.getenv("RATE_LIMIT_PER_MINUTE", "600"))
+    except ValueError:
+        value = 600
+    return max(1, min(value, 6000))
+
+
+_RATE_LIMIT = _rate_limit_per_minute()
+_rate_hits: dict = defaultdict(list)
+_RATE_LIMIT_EXEMPT_PREFIXES = ("/api/v1/health", "/health", "/docs", "/redoc", "/openapi.json")
+
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Sliding-window rate limit per IP+path. Health/docs endpoints are exempt."""
+    path = request.url.path
+    if path == "/" or path.startswith(_RATE_LIMIT_EXEMPT_PREFIXES):
+        return await call_next(request)
+    now = time.monotonic()
+    window_start = now - 60.0
+    client = request.client.host if request.client else "unknown"
+    key = f"{client}:{path}"
+    recent = [t for t in _rate_hits[key] if t > window_start]
+    _rate_hits[key] = recent
+    if len(recent) >= _RATE_LIMIT:
+        return JSONResponse({"code": "RATE_LIMITED", "message": "rate limit exceeded", "retryable": True}, status_code=429)
+    recent.append(now)
+    return await call_next(request)
 
 
 @app.middleware("http")

@@ -1,7 +1,7 @@
 """Reconciliation router."""
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, Query, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -61,6 +61,8 @@ async def get_reconciliation_run(
 async def get_reconciliation_items(
     run_id: str,
     status: str | None = None,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -68,7 +70,7 @@ async def get_reconciliation_items(
     query = select(ReconciliationItem).where(ReconciliationItem.reconciliation_run_id == run_id)
     if status:
         query = query.where(ReconciliationItem.status == status)
-    result = await db.execute(query)
+    result = await db.execute(query.offset(skip).limit(limit))
     return result.scalars().all()
 
 

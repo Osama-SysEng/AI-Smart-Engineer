@@ -134,12 +134,14 @@ async def create_site(
 @router.get("/{project_id}/sites", response_model=List[SiteResponse])
 async def list_sites(
     project_id: str,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """List sites for a project."""
     result = await db.execute(
-        select(Site).join(Project, Project.id == Site.project_id).where(Site.project_id == project_id, Project.tenant_id == current_user.tenant_id, Site.is_deleted == False)
+        select(Site).join(Project, Project.id == Site.project_id).where(Site.project_id == project_id, Project.tenant_id == current_user.tenant_id, Site.is_deleted == False).offset(skip).limit(limit)
     )
     return result.scalars().all()
 

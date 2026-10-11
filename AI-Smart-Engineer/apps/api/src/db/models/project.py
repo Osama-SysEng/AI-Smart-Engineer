@@ -19,7 +19,7 @@ class Project(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     end_date: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     budget: Mapped[float | None] = mapped_column(nullable=True)
     currency: Mapped[str] = mapped_column(String(10), default="USD")
-    tenant_id: Mapped[str] = mapped_column(String(36), default="default")
+    tenant_id: Mapped[str] = mapped_column(String(36), default="default", index=True)
     metadata_payload: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
     health_score: Mapped[int] = mapped_column(Integer, default=100)
 

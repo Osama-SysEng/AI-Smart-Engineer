@@ -10,7 +10,7 @@ from src.db.base import Base, TimestampMixin, UUIDMixin, SoftDeleteMixin
 class Document(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     __tablename__ = "documents"
 
-    project_id: Mapped[str] = mapped_column(ForeignKey("projects.id"), nullable=False)
+    project_id: Mapped[str] = mapped_column(ForeignKey("projects.id"), nullable=False, index=True)
     site_id: Mapped[str | None] = mapped_column(ForeignKey("sites.id"), nullable=True)
     uploaded_by: Mapped[str] = mapped_column(String(36), nullable=False)
     filename: Mapped[str] = mapped_column(String(500), nullable=False)
