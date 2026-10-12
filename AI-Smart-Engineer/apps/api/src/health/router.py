@@ -49,8 +49,10 @@ async def dependency_check(db: AsyncSession = Depends(get_db)):
     try:
         await db.execute(text("SELECT 1"))
         checks["database"] = "connected"
-    except Exception as e:
-        checks["database"] = f"error: {str(e)}"
+    except Exception:
+        # Never expose tracebacks to API clients; details go to server logs.
+        logger.exception("readiness: database check failed")
+        checks["database"] = "unavailable"
 
     # Check Redis
     try:
@@ -58,7 +60,8 @@ async def dependency_check(db: AsyncSession = Depends(get_db)):
         await r.ping()
         checks["redis"] = "connected"
         await r.close()
-    except Exception as e:
-        checks["redis"] = f"error: {str(e)}"
+    except Exception:
+        logger.exception("readiness: redis check failed")
+        checks["redis"] = "unavailable"
 
     return checks
