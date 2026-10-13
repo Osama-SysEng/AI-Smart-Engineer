@@ -17,8 +17,8 @@ node_modules/
 dist/
 build/
 
-# Storage / data
-storage/
+# Storage / data (local runtime files at repo root only)
+/storage/
 *.db
 *.sqlite*
 

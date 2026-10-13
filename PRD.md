@@ -1,6 +1,6 @@
 # PRD — AI-Smart-Engineer (المهندس الذكي)
 ## 1. نظرة عامة
-- منصة هندسة ذكية: مستندات، استخراج AI بثقة، مطابقة跨-mصادر، شذوذ، SAP، Workflows.
+- منصة هندسة ذكية: مستندات، استخراج AI بثقة، مطابقة-mصادر، شذوذ، SAP، Workflows.
 - Backend: FastAPI (`apps/api/src/main.py`) ببادئة `/api/v1/...`.
 - Web: Next.js على `:3000`. API Docs: `:8000/docs`. مهام: Celery.
 ## 2. المستخدمون

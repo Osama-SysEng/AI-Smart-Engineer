@@ -13,6 +13,6 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install -r AI-Smart-Engineer/apps/api/requirements.txt pytest pytest-asyncio httpx aiosqlite
+        run: pip install -r apps/api/requirements.txt pytest pytest-asyncio httpx aiosqlite
       - name: Run tests
-        run: cd AI-Smart-Engineer/apps/api && python -m pytest tests -q
+        run: cd apps/api && python -m pytest tests -q
