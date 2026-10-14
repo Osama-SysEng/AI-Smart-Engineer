@@ -100,3 +100,5 @@ Proprietary - AI Smart Engineer Platform
 ## Hardening status
 
 This build includes tenant-aware project/document access checks, explicit CORS configuration, production secret validation, upload size enforcement, authenticated AI WebSocket sessions, Docker build fixes, and CI checks. SAP remains read-only/dry-run by default.
+
+- Structured JSON logging with request IDs and secret redaction (see docs/LOGGING.md).
