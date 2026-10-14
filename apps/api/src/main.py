@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 
 from src.core.config import get_settings
 from src.core.logging import configure_logging, get_logger
+from src.core.logging_utils import request_id_ctx
 from src.core.exceptions import AIEngineerException
 from src.db.session import engine
 from src.db.base import Base
@@ -104,28 +105,26 @@ async def rate_limit_middleware(request: Request, call_next):
 
 @app.middleware("http")
 async def add_request_id(request: Request, call_next):
-    """Add request ID and logging."""
+    """Add request ID and emit a single access log line."""
     import uuid
-    request_id = str(uuid.uuid4())
+    start = time.perf_counter()
+    request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
     request.state.request_id = request_id
+    token = request_id_ctx.set(request_id)
 
-    logger.info(
-        "Request started",
-        method=request.method,
-        path=request.url.path,
-        request_id=request_id,
-        client=request.client.host if request.client else None,
-    )
-
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    finally:
+        request_id_ctx.reset(token)
     response.headers["X-Request-ID"] = request_id
 
     logger.info(
-        "Request completed",
+        "http.access",
         method=request.method,
         path=request.url.path,
         status_code=response.status_code,
         request_id=request_id,
+        duration_ms=round((time.perf_counter() - start) * 1000, 1),
     )
     return response
 
